@@ -12,7 +12,6 @@ The repository helps you to create your own Unity package with dependecies.
 - Create release from UPM branch on GitHub web page.
 ![alt text](https://neogeek.dev/images/creating-custom-packages-for-unity-2018.3--git-release.png)
 
----
 
 # How to import your package to Unity project
 You may use one of the variants
