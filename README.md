@@ -6,10 +6,10 @@ The repository helps you to create your own Unity package with dependecies.
 # How to use
 - "Use this template" green button at top right corner of GitHub page
 - Clone your new repository
-- Add all your stuff to Assets/_PackageRoot directory
-- Update Assets/_PackageRoot/package.json to yours
-- (on Windows) execute gitSubTreePushToUPM.bat
-- (on Mac) execute gitSubTreePushToUPM.makefile
+- Add all your stuff to <code>Assets/_PackageRoot directory</code>
+- Update <code>Assets/_PackageRoot/package.json</code> to yours
+- (on Windows) execute <code>gitSubTreePushToUPM.bat</code>
+- (on Mac) execute <code>gitSubTreePushToUPM.makefile</code>
 - Create release from UPM branch on GitHub web page.
 
 ![alt text](https://neogeek.dev/images/creating-custom-packages-for-unity-2018.3--git-release.png)
