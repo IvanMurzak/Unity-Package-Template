@@ -10,7 +10,8 @@ The repository helps you to create your own Unity package with dependecies.
 - Update <code>Assets/_PackageRoot/package.json</code> to yours
 - (on Windows) execute <code>gitSubTreePushToUPM.bat</code>
 - (on Mac) execute <code>gitSubTreePushToUPM.makefile</code>
-- Create release from UPM branch on GitHub web page.
+
+- (optional) Create release from UPM branch on GitHub web page for support different versions
 
 ![alt text](https://neogeek.dev/images/creating-custom-packages-for-unity-2018.3--git-release.png)
 
@@ -22,6 +23,7 @@ You may use one of the variants
 - Select "Add package from git URL"
 - Paste URL to your GitHub repository with simple modification:
 -- <code>https://github.com/USER/REPO.git#upm</code> Dont forget to replace **USER** and **REPO** to yours
+-- **Or** you may use special version <code>https://github.com/USER/REPO.git#v1.0.0</code> Dont forget to replace **USER** and **REPO** to yours
 
 ![alt text](https://neogeek.dev/images/creating-custom-packages-for-unity-2018.3--package-manager.png)
 
@@ -32,6 +34,15 @@ Dont forget to replace **USER** and **REPO** to yours.
 <pre><code>{
     "dependencies": {
         "your.own.package": "https://github.com/USER/REPO.git#upm"
+    }
+}
+</code></pre>
+
+**Or** you may use special version if you create one.
+Dont forget to replace **USER** and **REPO** to yours.
+<pre><code>{
+    "dependencies": {
+        "your.own.package": "https://github.com/USER/REPO.git#v1.0.0"
     }
 }
 </code></pre>
