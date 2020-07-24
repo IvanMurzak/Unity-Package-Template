@@ -22,14 +22,17 @@ You may use one of the variants
 ## Variant 1
 - Select "Add package from git URL"
 - Paste URL to your GitHub repository with simple modification:
--- <code>https://github.com/USER/REPO.git#upm</code> Dont forget to replace **USER** and **REPO** to yours
--- **Or** you may use special version <code>https://github.com/USER/REPO.git#v1.0.0</code> Dont forget to replace **USER** and **REPO** to yours
+- <code>https://github.com/USER/REPO.git#upm</code> 
+Dont forget to replace **USER** and **REPO** to yours
 
 ![alt text](https://neogeek.dev/images/creating-custom-packages-for-unity-2018.3--package-manager.png)
 
+### **Or** you may use special version if you create one  
+<code>https://github.com/USER/REPO.git#v1.0.0</code>
+Dont forget to replace **USER** and **REPO** to yours
+
 ## Variant 2
-Modify manifest.json file. 
-Change "your.own.package" to the name of your package.
+Modify manifest.json file. Change <code>"your.own.package"</code> to the name of your package.
 Dont forget to replace **USER** and **REPO** to yours.
 <pre><code>{
     "dependencies": {
@@ -38,7 +41,7 @@ Dont forget to replace **USER** and **REPO** to yours.
 }
 </code></pre>
 
-**Or** you may use special version if you create one.
+### **Or** you may use special version if you create one
 Dont forget to replace **USER** and **REPO** to yours.
 <pre><code>{
     "dependencies": {
