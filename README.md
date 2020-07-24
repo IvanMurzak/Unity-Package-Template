@@ -4,7 +4,8 @@ New Unity packages system is very easy to use and make your project much more cl
 The repository helps you to create your own Unity package with dependecies.
 
 # How to use
-- Fork or copy the repository
+- "Use the template" green button at top right corner of GitHub page
+- Clone your new repository
 - Add all your stuff to Assets/_PackageRoot directory
 - Update Assets/_PackageRoot/package.json to yours
 - (on Windows) execute gitSubTreePushToUPM.bat
