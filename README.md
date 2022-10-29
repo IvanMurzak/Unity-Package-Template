@@ -16,7 +16,7 @@ This is template repository for fast creation package for Unity which possible t
 [![image](https://user-images.githubusercontent.com/9135028/198753285-3d3c9601-0711-43c7-a8f2-d40ec42393a2.png)](https://github.com/IvanMurzak/Unity-Package-Template/generate)
 - Create your own repository on GitHub using this repository as template. Press the green button one line above.
 - Clone fresh created repository and open in Unity
-- Put files which should be packed into package under `Assets/_packageRoot` folder. Everything outside the folder could be used for testing or demonstrate your plugin 
+- Put files which should be packed into package under `Assets/_PackageRoot` folder. Everything outside the folder could be used for testing or demonstrate your plugin 
 <details>
   <summary>>> Detailed data structure in package root folder</summary>
   
