@@ -1,51 +1,45 @@
-# Unity-Package-Template
-UPM (Unity Package Manager) ready GitHub repository for Unity
-New Unity packages system is very easy to use and make your project much more cleaner.
-The repository helps you to create your own Unity package with dependecies.
+# Unity Package Template
 
-# How to use
-- "Use this template" green button at top right corner of GitHub page
-- Clone your new repository
-- Add all your stuff to <code>Assets/_PackageRoot directory</code>
-- Update <code>Assets/_PackageRoot/package.json</code> to yours
-- (on Windows) execute <code>gitSubTreePushToUPM.bat</code>
-- (on Mac) execute <code>gitSubTreePushToUPM.makefile</code>
+<img width="100%" alt="Stats" src="https://user-images.githubusercontent.com/9135028/198754538-4dd93fc6-7eb2-42ae-8ac6-d7361c39e6ef.gif"/>
 
-- (optional) Create release from UPM branch on GitHub web page for support different versions
+UPM (Unity Package Manager) ready GitHub repository for Unity. New Unity packages system is very easy to use and make your project much more cleaner. The repository helps you to create your own Unity package with dependecies.
 
-![alt text](https://neogeek.dev/images/creating-custom-packages-for-unity-2018.3--git-release.png)
+This is template repository for fast creation package for Unity which possible to import to Unity project through Package Manager in Unity Editor. The repository is universal for `Package Creation` and `Publishing` cycles.
 
+### Supported
+  - ✔️ [NPMJS](https://www.npmjs.com/)
+  - ✔️ [OpenUPM](https://openupm.com/)
+  - ✔️ [GitHub Packages](https://github.com/features/packages)
+  - ✔️ [UPM (Unity Package Manager)](https://docs.unity3d.com/Manual/upm-ui.html)
 
-# How to import your package to Unity project
-You may use one of the variants
+# Unity Package Creation 
+[![image](https://user-images.githubusercontent.com/9135028/198753285-3d3c9601-0711-43c7-a8f2-d40ec42393a2.png)](https://github.com/IvanMurzak/Unity-Package-Template/generate)
+- Create your own repository on GitHub using this repository as template. Press the green button one line above.
+- Clone fresh created repository and open in Unity
+- Put files which should be packed into package under `Assets/_packageRoot` folder. Everything outside the folder could be used for testing or demonstrate your plugin
 
-## Variant 1
-- Select "Add package from git URL"
-- Paste URL to your GitHub repository with simple modification:
-- <code>https://github.com/USER/REPO.git#upm</code> 
-Dont forget to replace **USER** and **REPO** to yours
+### Edit `Assets/_packageRoot/package.json` 
+Read more about NPM package format [here](https://docs.npmjs.com/cli/v8/configuring-npm/package-json)
+- change `name` in format `my.packge.name.hello.world`
+- change `displayName`, `version`, `description` to any
+- change `unity` to setup minumum supported Unity version
 
-![alt text](https://neogeek.dev/images/creating-custom-packages-for-unity-2018.3--package-manager.png)
+# Publishing
+There are many ways where to publish your Package. You can read about all variants and their pros and cons [here](https://github.com/IvanMurzak/Unity-Package-Template/blob/master/DistributionOptions.md).
 
-### **Or** you may use special version if you create one  
-<code>https://github.com/USER/REPO.git#v1.0.0</code>
-Dont forget to replace **USER** and **REPO** to yours
+### Preparation (just once)
+- Install [NPM](https://nodejs.org/en/download/)
+- Create [NPMJS](https://npmjs.com) account
+- Execute script in Unity project `npmAddUser.bat` and sign-in to your account
 
-## Variant 2
-Modify manifest.json file. Change <code>"your.own.package"</code> to the name of your package.
-Dont forget to replace **USER** and **REPO** to yours.
-<pre><code>{
-    "dependencies": {
-        "your.own.package": "https://github.com/USER/REPO.git#upm"
-    }
-}
-</code></pre>
+### Deploy
+Make sure you finished editing `package.json` and files in `Assets/_PackageRoot` folder. Because it is going to be public with no ability to discard it
+- Don't forget to increment `version` in `package.json` file. Versions lower than `1.0.0` gonna be showen in Unity as "preview"
+- Execute script in Unity project `npmPublish.bat` to publish your package to public
 
-### **Or** you may use special version if you create one
-Dont forget to replace **USER** and **REPO** to yours.
-<pre><code>{
-    "dependencies": {
-        "your.own.package": "https://github.com/USER/REPO.git#v1.0.0"
-    }
-}
-</code></pre>
+# Installation 
+When you package is distributed, you can install it into any Unity project. 
+
+- [Install OpenUPM-CLI](https://github.com/openupm/openupm-cli#installation)
+- Open command line in Unity project folder
+- `openupm --registry https://registry.npmjs.org add YOUR_PACKAGE_NAME`
