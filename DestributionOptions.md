@@ -10,8 +10,11 @@ NPMJS is the most popular Package destribution portal in the world. It is used f
 ### Cons
 - Need to create account and authorize once
 
+<br/><br/>
 
 # OpenUPM
+![image](https://user-images.githubusercontent.com/9135028/198767467-993b7b46-7d5f-440a-a15e-2d7c7b968bcb.png)
+
 Popular in Unity community platform for package destribution. Created as open sourced project for helping people to destribute their packages.
 ### Pros
 - Made especially for Unity
@@ -21,8 +24,11 @@ Popular in Unity community platform for package destribution. Created as open so
 - Long deployment duration (10 - 60 minutes)
 - Small community (in comparison to other options)
 
+<br/><br/>
 
 # GitHub Packages
+![image](https://user-images.githubusercontent.com/9135028/198767290-688cf8eb-a350-40c4-beb6-a50dcbe536a6.png)
+
 Amazing GitHub feature, also Unity support it
 ### Pros
 - Ultra fast deployment 
@@ -30,13 +36,18 @@ Amazing GitHub feature, also Unity support it
 ### Cons
 - Does not support version fetching, it means you can't see when new version of the package is available in UPM. To install new version you should manually change the version in a project.
 
+<br/><br/>
 
 # GitHub Repository
+![image](https://user-images.githubusercontent.com/9135028/198767290-688cf8eb-a350-40c4-beb6-a50dcbe536a6.png)
+
 Unity UPM support direct GitHub links to public repositories for using them as a package. The only required thing - the link should point on a folder which contains `package.json` file.
 ### Pros
 - no special steps required, just use your public repository as a package in UPM
 ### Cons
 - Does not support version fetching, it means you can't see when new version of the package is available in UPM. To install new version you should manually change the version in a project.
+
+<br/><br/>
 
 # How to use
 - "Use this template" green button at top right corner of GitHub page
