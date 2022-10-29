@@ -37,9 +37,15 @@ Make sure you finished editing `package.json` and files in `Assets/_PackageRoot`
 - Don't forget to increment `version` in `package.json` file. Versions lower than `1.0.0` gonna be showen in Unity as "preview"
 - Execute script in Unity project `npmPublish.bat` to publish your package to public
 
+
 # Installation 
 When you package is distributed, you can install it into any Unity project. 
 
 - [Install OpenUPM-CLI](https://github.com/openupm/openupm-cli#installation)
 - Open command line in Unity project folder
 - `openupm --registry https://registry.npmjs.org add YOUR_PACKAGE_NAME`
+
+
+# Final view in Package Manager
+
+![image](https://user-images.githubusercontent.com/9135028/198777922-fdb71949-aee7-49c8-800f-7db885de9453.png)
