@@ -25,7 +25,7 @@ Read more about NPM package format [here](https://docs.npmjs.com/cli/v8/configur
 - change `unity` to setup minumum supported Unity version
 
 # Publishing
-There are many ways where to publish your Package. You can read about all variants and their pros and cons [here](https://github.com/IvanMurzak/Unity-Package-Template/blob/master/DistributionOptions.md).
+There are many ways where to publish your Package. You can read about all variants and their pros and cons [here](https://github.com/IvanMurzak/Unity-Package-Template/blob/master/DestributionOptions.md).
 
 ### Preparation (just once)
 - Install [NPM](https://nodejs.org/en/download/)
