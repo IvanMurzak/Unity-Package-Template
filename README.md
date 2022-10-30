@@ -53,13 +53,15 @@ This is template repository for fast creation package for Unity which possible t
 </details>
 
 ### Edit `Assets/_packageRoot/package.json` 
-Read more about NPM package format [here](https://docs.npmjs.com/cli/v8/configuring-npm/package-json)
+To deeper inderstanding `package.json` format - read more about NPM package format [here](https://docs.npmjs.com/cli/v8/configuring-npm/package-json) (OPTIONAL)
+
+#### Required steps
 - change `name` in format `my.packge.name.hello.world`
 - change `displayName`, `version`, `description` to any
 - change `unity` to setup minumum supported Unity version
 
 # Publishing
-There are many ways where to publish your Package. You can read about all alternative variants and their pros and cons [here](https://github.com/IvanMurzak/Unity-Package-Template/blob/master/AlternativeDestributionOptions.md). But this tutorial is targeted on NPMJS deployment.
+There are many platforms to publish your Package. You can read more about all alternative variants and their pros and cons [here](https://github.com/IvanMurzak/Unity-Package-Template/blob/master/AlternativeDestributionOptions.md) (OPTIONAL). This tutorial is targeted on NPMJS deployment.
 
 ### Preparation (just once)
 - Install [NPM](https://nodejs.org/en/download/)
@@ -82,6 +84,20 @@ Make sure you finished editing `package.json` and files in `Assets/_PackageRoot`
 - Don't forget to increment `version` in `package.json` file. Versions lower than `1.0.0` gonna be showen in Unity as "preview"
 - Execute script in Unity project `npmPublish.bat` to publish your package to public
 
+<details>
+  <summary>>> npmPublish.bat script content</summary>
+  
+  First line in the script copies the `README.md` file to package root. Because the package should be there also, that is a part of package format.
+  It executes `npm publish` command in package root folder. The command publishes your package to NPMJS platform automatically
+  
+  ```
+xcopy .\README.md .\Assets\_PackageRoot\README.md /y
+cd Assets\_PackageRoot
+npm publish
+pause
+  ```
+  
+</details>
 
 # Installation 
 When you package is distributed, you can install it into any Unity project. 
