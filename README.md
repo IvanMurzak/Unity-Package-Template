@@ -12,6 +12,7 @@ This is template repository for fast creation package for Unity which possible t
   - ✔️ [GitHub Packages](https://github.com/features/packages)
   - ✔️ [UPM (Unity Package Manager)](https://docs.unity3d.com/Manual/upm-ui.html)
 
+
 # Unity Package Creation 
 [![image](https://user-images.githubusercontent.com/9135028/198753285-3d3c9601-0711-43c7-a8f2-d40ec42393a2.png)](https://github.com/IvanMurzak/Unity-Package-Template/generate)
 - Create your own repository on GitHub using this repository as template. Press the green button one line above.
@@ -53,12 +54,16 @@ This is template repository for fast creation package for Unity which possible t
 </details>
 
 ### Edit `Assets/_packageRoot/package.json` 
-To deeper inderstanding `package.json` format - read more about NPM package format [here](https://docs.npmjs.com/cli/v8/configuring-npm/package-json) (OPTIONAL)
 
 #### Required steps
 - change `name` in format `my.packge.name.hello.world`
 - change `displayName`, `version`, `description` to any
 - change `unity` to setup minumum supported Unity version
+
+#### Optional steps
+- add yourself as an author in format `"author": { "name": "Ivan Murzak", "url": "https://github.com/IvanMurzak" },`
+- advanced editing and format `package.json` - read more about NPM package format [here](https://docs.npmjs.com/cli/v8/configuring-npm/package-json)
+
 
 # Publishing
 There are many platforms to publish your Package. You can read more about all alternative variants and their pros and cons [here](https://github.com/IvanMurzak/Unity-Package-Template/blob/master/AlternativeDestributionOptions.md) (OPTIONAL). This tutorial is targeted on NPMJS deployment.
@@ -87,7 +92,7 @@ Make sure you finished editing `package.json` and files in `Assets/_PackageRoot`
 <details>
   <summary>>> npmPublish.bat script content</summary>
   
-  First line in the script copies the `README.md` file to package root. Because the package should be there also, that is a part of package format.
+  First line in the script copies the `README.md` file to package root. Because the README should be in a package also, that is a part of package format.
   It executes `npm publish` command in package root folder. The command publishes your package to NPMJS platform automatically
   
   ```
@@ -98,6 +103,7 @@ pause
   ```
   
 </details>
+
 
 # Installation 
 When you package is distributed, you can install it into any Unity project. 
