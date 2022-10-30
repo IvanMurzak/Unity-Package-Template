@@ -59,12 +59,23 @@ Read more about NPM package format [here](https://docs.npmjs.com/cli/v8/configur
 - change `unity` to setup minumum supported Unity version
 
 # Publishing
-There are many ways where to publish your Package. You can read about all variants and their pros and cons [here](https://github.com/IvanMurzak/Unity-Package-Template/blob/master/DestributionOptions.md).
+There are many ways where to publish your Package. You can read about all alternative variants and their pros and cons [here](https://github.com/IvanMurzak/Unity-Package-Template/blob/master/AlternativeDestributionOptions.md). But this tutorial is targeted on NPMJS deployment.
 
 ### Preparation (just once)
 - Install [NPM](https://nodejs.org/en/download/)
 - Create [NPMJS](https://npmjs.com) account
 - Execute script in Unity project `npmAddUser.bat` and sign-in to your account
+<details>
+  <summary>>> npmAddUser.bat script content</summary>
+  
+  It executes `npm adduser` command in package root folder
+  
+  ```
+cd Assets/_PackageRoot
+npm adduser
+  ```
+  
+</details>
 
 ### Deploy
 Make sure you finished editing `package.json` and files in `Assets/_PackageRoot` folder. Because it is going to be public with no ability to discard it
