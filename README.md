@@ -2,9 +2,9 @@
 
 <img width="100%" alt="Stats" src="https://user-images.githubusercontent.com/9135028/198754538-4dd93fc6-7eb2-42ae-8ac6-d7361c39e6ef.gif"/>
 
-UPM (Unity Package Manager) ready GitHub repository for Unity. New Unity packages system is very easy to use and make your project much more cleaner. The repository helps you to create your own Unity package with dependecies.
+UPM (Unity Package Manager) ready GitHub repository for Unity. Unity package system is very easy to use and to make your project much cleaner. The repository helps you to create your own Unity package with dependencies.
 
-This is template repository for fast creation package for Unity which possible to import to Unity project through Package Manager in Unity Editor. The repository is universal for `Package Creation` and `Publishing` cycles.
+This is a template repository for fast package creation for Unity which can be imported to Unity project through `Package Manager` in Unity Editor. The repository is universal for `Package Creation` and `Publishing` cycles.
 
 ### Supported
   - ✔️ [NPMJS](https://www.npmjs.com/)
@@ -15,13 +15,13 @@ This is template repository for fast creation package for Unity which possible t
 
 # Unity Package Creation 
 [![image](https://user-images.githubusercontent.com/9135028/198753285-3d3c9601-0711-43c7-a8f2-d40ec42393a2.png)](https://github.com/IvanMurzak/Unity-Package-Template/generate)
-- Create your own repository on GitHub using this repository as template. Press the green button one line above.
-- Clone fresh created repository and open in Unity
-- Put files which should be packed into package under `Assets/_PackageRoot` folder. Everything outside the folder could be used for testing or demonstrate your plugin 
+- Create your own repository on GitHub using this repository as a template. Press the green button one line above.
+- Clone freshly created repository and open in Unity
+- Put files that should be packed into the package under `Assets/_PackageRoot` folder. Everything outside the folder could be used for testing or demonstrating your plugin 
 <details>
   <summary>>> Detailed data structure in package root folder</summary>
   
-  [Unity guidlines](https://docs.unity3d.com/Manual/cus-layout.html) on how to organize files into package root directory
+  [Unity guidlines](https://docs.unity3d.com/Manual/cus-layout.html) about organizing files into the package root directory
   
 ```
   <root>
@@ -58,11 +58,12 @@ This is template repository for fast creation package for Unity which possible t
 #### Required steps
 - change `name` in format `my.packge.name.hello.world`
 - change `displayName`, `version`, `description` to any
-- change `unity` to setup minumum supported Unity version
+- change `unity` to setup minimum supported Unity version
 
 #### Optional steps
 - add yourself as an author in format `"author": { "name": "Ivan Murzak", "url": "https://github.com/IvanMurzak" },`
 - advanced editing and format `package.json` - read more about NPM package format [here](https://docs.npmjs.com/cli/v8/configuring-npm/package-json)
+- don't forget to update `LICENSE` file
 
 
 # Publishing
@@ -75,7 +76,7 @@ There are many platforms to publish your Package. You can read more about all al
 <details>
   <summary>>> npmAddUser.bat script content</summary>
   
-  It executes `npm adduser` command in package root folder
+  It executes `npm adduser` command in the package root folder
   
   ```
 cd Assets/_PackageRoot
@@ -86,14 +87,14 @@ npm adduser
 
 ### Deploy
 Make sure you finished editing `package.json` and files in `Assets/_PackageRoot` folder. Because it is going to be public with no ability to discard it
-- Don't forget to increment `version` in `package.json` file. Versions lower than `1.0.0` gonna be showen in Unity as "preview"
-- Execute script in Unity project `npmPublish.bat` to publish your package to public
+- Don't forget to increment `version` in `package.json` file. Versions lower than `1.0.0` gonna be shown in Unity as "preview"
+- Execute the script in Unity project `npmPublish.bat` to publish your package to the public
 
 <details>
   <summary>>> npmPublish.bat script content</summary>
   
-  First line in the script copies the `README.md` file to package root. Because the README should be in a package also, that is a part of package format.
-  It executes `npm publish` command in package root folder. The command publishes your package to NPMJS platform automatically
+  The first line in the script copies the `README.md` file to the package root. Because the README should be in a package also, that is a part of the package format.
+  It executes `npm publish` command in the package root folder. The command publishes your package to the NPMJS platform automatically
   
   ```
 xcopy .\README.md .\Assets\_PackageRoot\README.md /y
@@ -106,10 +107,10 @@ pause
 
 
 # Installation 
-When you package is distributed, you can install it into any Unity project. 
+When your package is distributed, you can install it into any Unity project. 
 
 - [Install OpenUPM-CLI](https://github.com/openupm/openupm-cli#installation)
-- Open command line in Unity project folder
+- Open the command line in the Unity project folder
 - `openupm --registry https://registry.npmjs.org add YOUR_PACKAGE_NAME`
 
 
