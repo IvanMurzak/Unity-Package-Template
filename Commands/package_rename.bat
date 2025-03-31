@@ -33,18 +33,22 @@ echo PackageName: %packageName%
 echo Lowercase PackageName: !lowerPackageName!
 echo Lowercase Username: !lowerUsername!
 
-REM Recursively replace "package" and "Package" in file content, ignoring .md files
+REM Recursively replace "package" and "Package" in file content, ignoring .md and .meta files
 for /r %%F in (*) do (
+    REM Check if the file ends with .md or .meta
     if /i "%%~xF"==".md" (
-        goto :continue
+        echo Skip .md files
+        REM Skip to the next iteration
+    ) else if /i "%%~xF"==".meta" (
+        echo Skip .meta files
+        REM Skip to the next iteration
+    ) else (
+        REM Process the file
+        echo Processing file: %%F
+        powershell -Command "(Get-Content -Raw -Path '%%F') -replace 'package', '!lowerPackageName!' -replace 'Package', '%packageName%' -replace 'Your_Name', '%username%' -replace 'your_name', '!lowerUsername!' | Set-Content -Path '%%F'" || (
+            echo Failed to process file %%F
+        )
     )
-    if /i "%%~xF"==".meta" (
-        goto :continue
-    )
-    powershell -Command "(Get-Content -Raw -Path '%%F') -replace 'package', '!lowerPackageName!' -replace 'Package', '%packageName%' -replace 'Your_Name', '%username%' -replace 'your_name', '!lowerUsername!' | Set-Content -Path '%%F'" || (
-        echo Failed to process file %%F
-    )
-    :continue
 )
 
 REM Recursively rename files with "package" and "Package" in their names, ignoring .md files
