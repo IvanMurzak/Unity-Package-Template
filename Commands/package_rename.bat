@@ -35,11 +35,16 @@ echo Lowercase Username: !lowerUsername!
 
 REM Recursively replace "package" and "Package" in file content, ignoring .md files
 for /r %%F in (*) do (
-    if /i not "%%~xF"==".md" (
-        powershell -Command "(Get-Content -Raw -Path '%%F') -replace 'package', '!lowerPackageName!' -replace 'Package', '%packageName%' -replace 'Your_Name', '%username%' -replace 'your_name', '!lowerUsername!' | Set-Content -Path '%%F'" || (
-            echo Failed to process file %%F
-        )
+    if /i "%%~xF"==".md" (
+        goto :continue
     )
+    if /i "%%~xF"==".meta" (
+        goto :continue
+    )
+    powershell -Command "(Get-Content -Raw -Path '%%F') -replace 'package', '!lowerPackageName!' -replace 'Package', '%packageName%' -replace 'Your_Name', '%username%' -replace 'your_name', '!lowerUsername!' | Set-Content -Path '%%F'" || (
+        echo Failed to process file %%F
+    )
+    :continue
 )
 
 REM Recursively rename files with "package" and "Package" in their names, ignoring .md files
