@@ -1,4 +1,4 @@
-cd ..\Assets\_PackageRoot
+cd ..\Assets\root
 @echo off
 echo ----------------------------------------------------
 echo Executing "npm pkg get version"
@@ -15,8 +15,8 @@ echo ----------------------------------------------------
 cd ..\..\
 echo Creating GitHub release with tag=%CleanVersion%
 @echo on
-gh release create %CleanVersion% --generate-notes --title %CleanVersion%
-gh release view %CleanVersion% --web
+gh release create %CleanVersion% --draft --generate-notes --title %CleanVersion%
+gh repo view --web
 @echo off
 echo ----------------------------------------------------
 
