@@ -19,15 +19,15 @@ if "%~2"=="" (
 echo Debugging: Reading arguments
 set "username=%~1"
 set "packageName=%~2"
-set "lowerPackageName=%packageName%"
-set "lowerUsername=%username%"
+
+echo Debugging: Converting to lowercase
+for /f "usebackq delims=" %%A in (`powershell -Command "$env:packageName.ToLower()"`) do set "lowerPackageName=%%A"
+for /f "usebackq delims=" %%A in (`powershell -Command "$env:username.ToLower()"`) do set "lowerUsername=%%A"
+
 echo Debugging: SetLocal
 setlocal enabledelayedexpansion
-echo Debugging: for1
-for %%A in (%lowerPackageName%) do set "lowerPackageName=%%A"
-for %%A in (%lowerUsername%) do set "lowerUsername=%%A"
 
-echo Debugging: Print variables
+REM Debugging: Print variables
 echo Username: %username%
 echo PackageName: %packageName%
 echo Lowercase PackageName: !lowerPackageName!
@@ -36,13 +36,14 @@ echo Lowercase Username: !lowerUsername!
 REM Recursively replace "package" and "Package" in file content, ignoring .md and .meta files
 for /r %%F in (*) do (
     REM Check if the file ends with .md or .meta
-    if /i "%%~xF"==".md" (
-        echo Skip .md files
-        REM Skip to the next iteration
-    ) else if /i "%%~xF"==".meta" (
-        echo Skip .meta files
-        REM Skip to the next iteration
-    ) else (
+    if /i "%%~xF"==".asmdef" (
+        REM Process the file
+        echo Processing file: %%F
+        powershell -Command "(Get-Content -Raw -Path '%%F') -replace 'package', '!lowerPackageName!' -replace 'Package', '%packageName%' -replace 'Your_Name', '%username%' -replace 'your_name', '!lowerUsername!' | Set-Content -Path '%%F'" || (
+            echo Failed to process file %%F
+        )
+    )
+    if /i "%%~nxF"=="package.json" (
         REM Process the file
         echo Processing file: %%F
         powershell -Command "(Get-Content -Raw -Path '%%F') -replace 'package', '!lowerPackageName!' -replace 'Package', '%packageName%' -replace 'Your_Name', '%username%' -replace 'your_name', '!lowerUsername!' | Set-Content -Path '%%F'" || (
@@ -53,9 +54,8 @@ for /r %%F in (*) do (
 
 REM Recursively rename files with "package" and "Package" in their names, ignoring .md files
 for /r %%F in (*) do (
-    if /i not "%%~xF"==".md" (
+    if /i "%%~xF"==".asmdef" (
         set "newName=%%~nxF"
-        set "newName=!newName:package=!lowerPackageName!"
         set "newName=!newName:Package=%packageName%!"
         if not "%%~nxF"=="!newName!" (
             ren "%%F" "!newName!" || (
