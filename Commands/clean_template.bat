@@ -9,4 +9,5 @@ for /r %%f in (*.meta) do (
 
 del /f /q "Unity-Package-Template.sln"
 
+echo Done!
 pause
