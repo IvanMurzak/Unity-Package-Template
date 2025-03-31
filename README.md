@@ -30,15 +30,14 @@ com.github.your_name.package
 For MacOS
 
 ```bash
-chmod +x package_rename.sh
-./package_rename.sh "My.Tool.Name"
+
 ```
 
 For Windows
 
 ```bash
-chmod +x package_rename.sh
-./package_rename.sh "My.Tool.Name"
+cd Commands
+.\package_rename.bat Username PackageName
 ```
 
 ###### Option 2: Manual package rename
