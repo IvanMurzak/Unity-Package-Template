@@ -39,14 +39,14 @@ for /r %%F in (*) do (
     if /i "%%~xF"==".asmdef" (
         REM Process the file
         echo Processing file: %%F
-        powershell -Command "(Get-Content -Raw -Path '%%F') -replace 'package', '!lowerPackageName!' -replace 'Package', '%packageName%' -replace 'Your_Name', '%username%' -replace 'your_name', '!lowerUsername!' | Set-Content -Path '%%F'" || (
+        powershell -Command "(Get-Content -Raw -Path '%%F') -replace 'Package', '%packageName%' -replace 'package', '!lowerPackageName!' -replace 'Your_Name', '%username%' -replace 'your_name', '!lowerUsername!' | Set-Content -Path '%%F'" || (
             echo Failed to process file %%F
         )
     )
     if /i "%%~nxF"=="package.json" (
         REM Process the file
         echo Processing file: %%F
-        powershell -Command "(Get-Content -Raw -Path '%%F') -replace 'package', '!lowerPackageName!' -replace 'Package', '%packageName%' -replace 'Your_Name', '%username%' -replace 'your_name', '!lowerUsername!' | Set-Content -Path '%%F'" || (
+        powershell -Command "(Get-Content -Raw -Path '%%F') -replace 'Package', '%packageName%' -replace 'package', '!lowerPackageName!' -replace 'Your_Name', '%username%' -replace 'your_name', '!lowerUsername!' | Set-Content -Path '%%F'" || (
             echo Failed to process file %%F
         )
     )
