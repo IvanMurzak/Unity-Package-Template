@@ -2,8 +2,8 @@
     "name": "com.github.your_name.package",
     "displayName": "Package",
     "author": {
-        "name": "Your Name",
-        "url": "https://github.com/YourName"
+        "name": "Your_Name",
+        "url": "https://github.com/Your_Name"
     },
     "keywords": [
         "keyword1",
