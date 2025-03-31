@@ -1,3 +1,4 @@
+cd ..
 rmdir /s /q "ProjectSettings"
 rmdir /s /q "Packages"
 rmdir /s /q ".vscode"
