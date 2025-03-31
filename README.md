@@ -65,15 +65,24 @@ Follow the instruction - [manual package rename](https://github.com/IvanMurzak/U
 <details>
   <summary><b>❌ NO</b></summary>
 
-  - 👉 **Delete** `Assets/root/Tests` folder
-  - 👉 **Delete** `.github/workflows` folder
+- 👉 **Delete** `Assets/root/Tests` folder
+- 👉 **Delete** `.github/workflows` folder
 
 </details>
 
 <details>
   <summary><b>✅ YES</b></summary>
 
-  If you executed `package-rename` script, nothing else should be done. If not, please follow [manual package rename](https://github.com/IvanMurzak/Unity-Package-Template/blob/main/Docs/Manual-Package-Rename.md) instructions
+- 👉 Make sure you executed `package-rename` script from the step #2. If not, please follow [manual package rename](https://github.com/IvanMurzak/Unity-Package-Template/blob/main/Docs/Manual-Package-Rename.md) instructions
+
+- 👉 Add GitHub Secrets
+  > At the GitHub repository, go to "Settings", then "Secrets and Variables", then "Actions", then click on "New repository secret"
+   1. Add `UNITY_EMAIL` - email of your Unity ID's account
+   2. Add `UNITY_PASSWORD` - password of your Unity ID's account
+   3. Add `UNITY_LICENSE` - license content. Could be taken from `Unity_lic.ulf` file. Just open it in any text editor and copy the entire content
+      1. Windows: The `Unity_lic.ulf` file is located at `C:/ProgramData/Unity/Unity_lic.ulf`
+      2. MacOS: `/Library/Application Support/Unity/Unity_lic.ulf`
+      3. Linux: `~/.local/share/unity3d/Unity/Unity_lic.ulf`
 
 </details>
 
