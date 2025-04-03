@@ -1,5 +1,4 @@
 cd ..
-rmdir /s /q "ProjectSettings"
 rmdir /s /q ".vscode"
 
 for /r %%f in (*.meta) do (
