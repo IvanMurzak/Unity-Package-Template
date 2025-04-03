@@ -10,6 +10,7 @@ del /f /q "Unity-Package-Template.sln"
 
 del /f /q "Packages\packages-lock.json"
 
+del /f /q "ProjectSettings\ProjectSettings.asset"
 del /f /q "ProjectSettings\AudioManager.asset"
 del /f /q "ProjectSettings\ClusterInputManager.asset"
 del /f /q "ProjectSettings\DynamicsManager.asset"
