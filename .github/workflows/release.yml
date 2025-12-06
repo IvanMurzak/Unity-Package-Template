@@ -1,0 +1,455 @@
+name: release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  check-version-tag:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get_version.outputs.current-version }}
+      prev_tag: ${{ steps.prev_tag.outputs.tag }}
+      tag_exists: ${{ steps.tag_exists.outputs.exists }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Get version from package.json
+        id: get_version
+        uses: martinbeentjes/npm-get-version-action@v1.3.1
+        with:
+          path: Unity-MCP-Plugin/Assets/root
+
+      - name: Find previous version tag
+        id: prev_tag
+        uses: WyriHaximus/github-action-get-previous-tag@v1
+
+      - name: Check if tag exists
+        id: tag_exists
+        uses: mukunku/tag-exists-action@v1.6.0
+        with:
+          tag: ${{ steps.get_version.outputs.current-version }}
+
+  # test-unity-mcp-common:
+  #   runs-on: ubuntu-latest
+  #   needs: check-version-tag
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v4
+
+  #     - name: Setup .NET
+  #       uses: actions/setup-dotnet@v4
+  #       with:
+  #         dotnet-version: '9.0.x'
+
+  #     - name: Restore dependencies
+  #       working-directory: Unity-MCP-Plugin/Assets/root/Unity-MCP-Common
+  #       run: dotnet restore
+
+  #     - name: Build
+  #       working-directory: Unity-MCP-Plugin/Assets/root/Unity-MCP-Common
+  #       run: dotnet build --no-restore --configuration Release
+
+  #     - name: Test
+  #       working-directory: Unity-MCP-Plugin/Assets/root/Unity-MCP-Common
+  #       run: dotnet test --no-build --verbosity normal --configuration Release
+
+  build-unity-installer:
+    runs-on: ubuntu-latest
+    needs: [check-version-tag]
+    if: needs.check-version-tag.outputs.tag_exists == 'false'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Cache Unity Library
+        uses: actions/cache@v4
+        with:
+          path: ./Installer/Library
+          key: Library-Unity-Installer
+
+      - name: Test Unity Installer (EditMode)
+        uses: game-ci/unity-test-runner@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          projectPath: ./Installer
+          unityVersion: 2022.3.61f1
+          customImage: 'unityci/editor:ubuntu-2022.3.61f1-base-3'
+          testMode: editmode
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          checkName: Unity Installer EditMode Test Results
+          artifactsPath: artifacts-installer-editmode
+          customParameters: -CI true -GITHUB_ACTIONS true
+
+      - name: Clean Unity artifacts and reset git state
+        run: |
+          # Force remove Unity generated files with restricted permissions
+          sudo rm -rf ./Installer/Logs/ || true
+          sudo rm -rf ./Installer/Temp/ || true
+          sudo rm -rf ./artifacts-installer-editmode/ || true
+
+          # Reset only tracked files to their committed state
+          git reset --hard HEAD
+          echo "Cleaned Unity artifacts and reset tracked files"
+
+      - name: Export Unity Package
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          projectPath: ./Installer
+          unityVersion: 2022.3.61f1
+          customImage: 'unityci/editor:ubuntu-2022.3.61f1-base-3'
+          buildName: AI-Game-Dev-Installer
+          buildsPath: build
+          buildMethod: com.IvanMurzak.Unity.MCP.Installer.PackageExporter.ExportPackage
+          customParameters: -CI true -GITHUB_ACTIONS true
+
+      - name: Upload Unity Package as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: unity-installer-package
+          path: ./Installer/build/AI-Game-Dev-Installer.unitypackage
+
+  build-and-zip-mcp-server:
+    runs-on: macos-latest
+    needs: check-version-tag
+    if: needs.check-version-tag.outputs.tag_exists == 'false'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Make build script executable
+        run: chmod +x ./Unity-MCP-Server/build-all.sh
+
+      - name: Build executables for all platforms
+        shell: bash {0}
+        run: cd Unity-MCP-Server && ./build-all.sh Release
+
+      - name: Upload build zips as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mcp-server-zips
+          path: ./Unity-MCP-Server/publish/*.zip
+
+  # --- UNITY TESTS ---
+  # -------------------
+
+  # --- EDIT MODE ---
+
+  test-unity-2022-3-61f1-editmode:
+    needs: [build-and-zip-mcp-server, build-unity-installer]
+    uses: ./.github/workflows/test_unity_plugin.yml
+    with:
+      projectPath: './Unity-MCP-Plugin'
+      unityVersion: '2022.3.61f1'
+      testMode: 'editmode'
+    secrets: inherit
+
+  test-unity-2023-2-20f1-editmode:
+    needs: [build-and-zip-mcp-server, build-unity-installer]
+    uses: ./.github/workflows/test_unity_plugin.yml
+    with:
+      projectPath: './Unity-MCP-Plugin'
+      unityVersion: '2023.2.20f1'
+      testMode: 'editmode'
+    secrets: inherit
+
+  test-unity-6000-2-3f1-editmode:
+    needs: [build-and-zip-mcp-server, build-unity-installer]
+    uses: ./.github/workflows/test_unity_plugin.yml
+    with:
+      projectPath: './Unity-MCP-Plugin'
+      unityVersion: '6000.2.3f1'
+      testMode: 'editmode'
+    secrets: inherit
+
+  # --- PLAY MODE ---
+
+  test-unity-2022-3-61f1-playmode:
+    needs: [build-and-zip-mcp-server, build-unity-installer]
+    uses: ./.github/workflows/test_unity_plugin.yml
+    with:
+      projectPath: './Unity-MCP-Plugin'
+      unityVersion: '2022.3.61f1'
+      testMode: 'playmode'
+    secrets: inherit
+
+  test-unity-2023-2-20f1-playmode:
+    needs: [build-and-zip-mcp-server, build-unity-installer]
+    uses: ./.github/workflows/test_unity_plugin.yml
+    with:
+      projectPath: './Unity-MCP-Plugin'
+      unityVersion: '2023.2.20f1'
+      testMode: 'playmode'
+    secrets: inherit
+
+  test-unity-6000-2-3f1-playmode:
+    needs: [build-and-zip-mcp-server, build-unity-installer]
+    uses: ./.github/workflows/test_unity_plugin.yml
+    with:
+      projectPath: './Unity-MCP-Plugin'
+      unityVersion: '6000.2.3f1'
+      testMode: 'playmode'
+    secrets: inherit
+
+  # --- STANDALONE ---
+
+  test-unity-2022-3-61f1-standalone:
+    needs: [build-and-zip-mcp-server, build-unity-installer]
+    uses: ./.github/workflows/test_unity_plugin.yml
+    with:
+      projectPath: './Unity-MCP-Plugin'
+      unityVersion: '2022.3.61f1'
+      testMode: 'standalone'
+    secrets: inherit
+
+  test-unity-2023-2-20f1-standalone:
+    needs: [build-and-zip-mcp-server, build-unity-installer]
+    uses: ./.github/workflows/test_unity_plugin.yml
+    with:
+      projectPath: './Unity-MCP-Plugin'
+      unityVersion: '2023.2.20f1'
+      testMode: 'standalone'
+    secrets: inherit
+
+  test-unity-6000-2-3f1-standalone:
+    needs: [build-and-zip-mcp-server, build-unity-installer]
+    uses: ./.github/workflows/test_unity_plugin.yml
+    with:
+      projectPath: './Unity-MCP-Plugin'
+      unityVersion: '6000.2.3f1'
+      testMode: 'standalone'
+    secrets: inherit
+
+  # -------------------
+
+  release-unity-plugin:
+    runs-on: ubuntu-latest
+    needs: [
+      check-version-tag,
+      build-and-zip-mcp-server,
+      build-unity-installer,
+      test-unity-2022-3-61f1-editmode,
+      test-unity-2022-3-61f1-playmode,
+      test-unity-2022-3-61f1-standalone,
+      test-unity-2023-2-20f1-editmode,
+      test-unity-2023-2-20f1-playmode,
+      test-unity-2023-2-20f1-standalone,
+      test-unity-6000-2-3f1-editmode,
+      test-unity-6000-2-3f1-playmode,
+      test-unity-6000-2-3f1-standalone
+    ]
+    if: needs.check-version-tag.outputs.tag_exists == 'false'
+    outputs:
+      version: ${{ needs.check-version-tag.outputs.version }}
+      success: ${{ steps.rel_desc.outputs.success }}
+      release_notes: ${{ steps.rel_desc.outputs.release_body }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Generate release description
+        id: rel_desc
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -e
+          version=${{ needs.check-version-tag.outputs.version }}
+          prev_tag=${{ needs.check-version-tag.outputs.prev_tag }}
+          repo_url="https://github.com/${GITHUB_REPOSITORY}"
+          today=$(date +'%B %e, %Y')
+
+          echo "repo_url: $repo_url"
+          echo "today: $today"
+
+          echo "# AI Game Developer (Unity MCP) $version" > release.md
+          echo "**Released:** *$today*" >> release.md
+
+          echo "" >> release.md
+          echo "---" >> release.md
+          echo "" >> release.md
+
+          if [ -n "$prev_tag" ]; then
+            echo "## Comparison" >> release.md
+            echo "See every change: [Compare $prev_tag...$version]($repo_url/compare/$prev_tag...$version)" >> release.md
+
+            echo "" >> release.md
+            echo "---" >> release.md
+            echo "" >> release.md
+
+            echo "## Commit Summary (Newest → Oldest)" >> release.md
+            for sha in $(git log --pretty=format:'%H' $prev_tag..HEAD); do
+              username=$(gh api repos/${GITHUB_REPOSITORY}/commits/$sha --jq '.author.login // .commit.author.name')
+              message=$(git log -1 --pretty=format:'%s' $sha)
+              short_sha=$(git log -1 --pretty=format:'%h' $sha)
+              echo "- [\`$short_sha\`]($repo_url/commit/$sha) — $message by @$username" >> release.md
+            done
+          fi
+
+          printf "release_body<<ENDOFRELEASEBODY\n%s\nENDOFRELEASEBODY\n" "$(cat release.md)" >> $GITHUB_OUTPUT
+          echo "success=true" >> $GITHUB_OUTPUT
+
+      - name: Create Tag and Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.check-version-tag.outputs.version }}
+          name: ${{ needs.check-version-tag.outputs.version }}
+          body: ${{ steps.rel_desc.outputs.release_body }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish-unity-installer:
+    runs-on: ubuntu-latest
+    needs: release-unity-plugin
+    if: needs.release-unity-plugin.outputs.success == 'true'
+    steps:
+      - name: Download Unity Package artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: unity-installer-package
+          path: ./
+
+      - name: Upload Unity Package to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ./AI-Game-Dev-Installer.unitypackage
+          tag_name: ${{ needs.release-unity-plugin.outputs.version }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish-mcp-server:
+    runs-on: macos-latest
+    needs: release-unity-plugin
+    if: needs.release-unity-plugin.outputs.success == 'true'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download build zips artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: mcp-server-zips
+          path: ./Unity-MCP-Server/publish
+
+      - name: Upload release zip archives
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ./Unity-MCP-Server/publish/*.zip
+          tag_name: ${{ needs.release-unity-plugin.outputs.version }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish_discord:
+    runs-on: ubuntu-latest
+    needs: release-unity-plugin
+    if: needs.release-unity-plugin.outputs.success == 'true'
+    steps:
+      - name: Send Release Notes to Discord
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_RELEASE_NOTES_WEBHOOK }}
+        run: |
+          # Get the release notes from the previous job
+          release_notes='${{ needs.release-unity-plugin.outputs.release_notes }}'
+          version='${{ needs.release-unity-plugin.outputs.version }}'
+
+          # Convert usernames to GitHub profile links
+          # Convert "by @username" to "by [@username](https://github.com/username)"
+          release_notes_with_links=$(echo "$release_notes" | sed -E 's/by @([A-Za-z0-9_-]+)/by [@\1](https:\/\/github.com\/\1)/g')
+
+          # Remove horizontal separators (---) and clean up extra blank lines
+          # 1. Remove lines containing only --- and whitespace
+          # 2. Remove lines that contain only whitespace
+          # 3. Compress multiple consecutive empty lines into one
+          release_notes_cleaned=$(echo "$release_notes_with_links" | \
+            sed '/^[[:space:]]*---[[:space:]]*$/d' | \
+            sed 's/^[[:space:]]*$//' | \
+            sed '/^$/N;/^\n$/d')
+
+          # Create the release URL
+          release_url="https://github.com/${{ github.repository }}/releases/tag/${version}"
+
+          # Append the release link to the notes
+          full_message="${release_notes_cleaned}"$'\n\n'"📦 **[View Full Release](${release_url})**"
+
+          # Discord has a 2000 character limit, so we'll truncate if needed
+          if [ ${#full_message} -gt 2000 ]; then
+            # Remove lines from the end until it fits, keeping the link
+            link_text=$'\n\n'"📦 **[View Full Release](${release_url})**"
+            max_length=$((2000 - ${#link_text}))
+
+            # Split into lines and rebuild until we exceed the limit
+            truncated_notes=""
+            while IFS= read -r line; do
+              test_notes="${truncated_notes}${line}"$'\n'
+              if [ ${#test_notes} -gt $max_length ]; then
+                break
+              fi
+              truncated_notes="$test_notes"
+            done <<< "$release_notes_cleaned"
+
+            # Add ellipsis on its own line if we truncated
+            full_message="${truncated_notes}"$'\n'"...${link_text}"
+          fi
+
+          # Create JSON payload for Discord webhook
+          # flags: 4 sets the SUPPRESS_EMBEDS flag to suppress embeds/link previews.
+          # See: https://discord.com/developers/docs/resources/channel#create-message
+          json_payload=$(jq -n \
+            --arg content "$full_message" \
+            '{content: $content, flags: 4}')
+
+          # Send to Discord webhook
+          curl -X POST "$DISCORD_WEBHOOK" \
+            -H "Content-Type: application/json" \
+            -d "$json_payload"
+
+          echo "Release notes sent to Discord for version $version"
+
+  deploy:
+    needs: release-unity-plugin
+    if: needs.release-unity-plugin.outputs.success == 'true'
+    uses: ./.github/workflows/deploy.yml
+    with:
+      version: ${{ needs.release-unity-plugin.outputs.version }}
+    secrets: inherit
+
+  # Cleanup job to remove build artifacts after publishing
+  cleanup-artifacts:
+    runs-on: ubuntu-latest
+    needs: [publish-mcp-server, publish-unity-installer, deploy]
+    if: always()
+    steps:
+      - name: Delete MCP Server artifacts
+        uses: geekyeggo/delete-artifact@v5
+        with:
+          name: mcp-server-zips
+          failOnError: false
+        continue-on-error: true
+
+      - name: Delete Unity Package artifacts
+        uses: geekyeggo/delete-artifact@v5
+        with:
+          name: unity-installer-package
+          failOnError: false
+        continue-on-error: true
