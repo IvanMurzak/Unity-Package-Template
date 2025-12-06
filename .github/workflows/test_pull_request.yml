@@ -11,7 +11,7 @@ jobs:
   test-unity-2022-3-61f1-editmode:
     uses: ./.github/workflows/test_unity_plugin.yml
     with:
-      projectPath: "./Unity-MCP-Plugin"
+      projectPath: "./Unity-Package"
       unityVersion: "2022.3.61f1"
       testMode: "editmode"
     secrets: inherit
@@ -19,7 +19,7 @@ jobs:
   test-unity-2023-2-20f1-editmode:
     uses: ./.github/workflows/test_unity_plugin.yml
     with:
-      projectPath: "./Unity-MCP-Plugin"
+      projectPath: "./Unity-Package"
       unityVersion: "2023.2.20f1"
       testMode: "editmode"
     secrets: inherit
@@ -27,7 +27,7 @@ jobs:
   test-unity-6000-2-3f1-editmode:
     uses: ./.github/workflows/test_unity_plugin.yml
     with:
-      projectPath: "./Unity-MCP-Plugin"
+      projectPath: "./Unity-Package"
       unityVersion: "6000.2.3f1"
       testMode: "editmode"
     secrets: inherit
@@ -37,7 +37,7 @@ jobs:
   test-unity-2022-3-61f1-playmode:
     uses: ./.github/workflows/test_unity_plugin.yml
     with:
-      projectPath: "./Unity-MCP-Plugin"
+      projectPath: "./Unity-Package"
       unityVersion: "2022.3.61f1"
       testMode: "playmode"
     secrets: inherit
@@ -45,7 +45,7 @@ jobs:
   test-unity-2023-2-20f1-playmode:
     uses: ./.github/workflows/test_unity_plugin.yml
     with:
-      projectPath: "./Unity-MCP-Plugin"
+      projectPath: "./Unity-Package"
       unityVersion: "2023.2.20f1"
       testMode: "playmode"
     secrets: inherit
@@ -53,7 +53,7 @@ jobs:
   test-unity-6000-2-3f1-playmode:
     uses: ./.github/workflows/test_unity_plugin.yml
     with:
-      projectPath: "./Unity-MCP-Plugin"
+      projectPath: "./Unity-Package"
       unityVersion: "6000.2.3f1"
       testMode: "playmode"
     secrets: inherit
@@ -63,7 +63,7 @@ jobs:
   test-unity-2022-3-61f1-standalone:
     uses: ./.github/workflows/test_unity_plugin.yml
     with:
-      projectPath: "./Unity-MCP-Plugin"
+      projectPath: "./Unity-Package"
       unityVersion: "2022.3.61f1"
       testMode: "standalone"
     secrets: inherit
@@ -71,7 +71,7 @@ jobs:
   test-unity-2023-2-20f1-standalone:
     uses: ./.github/workflows/test_unity_plugin.yml
     with:
-      projectPath: "./Unity-MCP-Plugin"
+      projectPath: "./Unity-Package"
       unityVersion: "2023.2.20f1"
       testMode: "standalone"
     secrets: inherit
@@ -79,7 +79,7 @@ jobs:
   test-unity-6000-2-3f1-standalone:
     uses: ./.github/workflows/test_unity_plugin.yml
     with:
-      projectPath: "./Unity-MCP-Plugin"
+      projectPath: "./Unity-Package"
       unityVersion: "6000.2.3f1"
       testMode: "standalone"
     secrets: inherit
