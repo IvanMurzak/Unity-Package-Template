@@ -297,13 +297,6 @@ jobs:
     needs: [publish-unity-installer]
     if: always()
     steps:
-      - name: Delete MCP Server artifacts
-        uses: geekyeggo/delete-artifact@v5
-        with:
-          name: mcp-server-zips
-          failOnError: false
-        continue-on-error: true
-
       - name: Delete Unity Package artifacts
         uses: geekyeggo/delete-artifact@v5
         with:
