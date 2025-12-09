@@ -1,6 +1,6 @@
 {
     "name": "YOUR_PACKAGE_ID_LOWERCASE",
-    "displayName": "Package",
+    "displayName": "YOUR_PACKAGE_NAME",
     "author": {
         "name": "Your_Name",
         "url": "https://github.com/Your_Name"
