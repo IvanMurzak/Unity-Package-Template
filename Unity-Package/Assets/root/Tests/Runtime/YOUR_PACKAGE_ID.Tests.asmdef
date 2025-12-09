@@ -1,14 +1,10 @@
 {
-    "name": "Package.Editor.Tests",
+    "name": "YOUR_PACKAGE_ID.Tests",
     "references": [
         "UnityEngine.TestRunner",
-        "UnityEditor.TestRunner",
-        "Package.Runtime",
-        "Package.Editor"
+        "YOUR_PACKAGE_ID.Runtime"
     ],
-    "includePlatforms": [
-        "Editor"
-    ],
+    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": true,

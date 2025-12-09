@@ -1,10 +1,12 @@
 {
-    "name": "Package.Tests",
+    "name": "YOUR_PACKAGE_ID.Installer.Tests",
+    "rootNamespace": "YOUR_PACKAGE_ID.Installer.Tests",
     "references": [
-        "UnityEngine.TestRunner",
-        "Package.Runtime"
+        "YOUR_PACKAGE_ID.Installer"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": true,

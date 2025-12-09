@@ -4,14 +4,15 @@ name: test-unity-plugin
 # 1. Triggers
 ##############################################################################
 on:
+  workflow_dispatch:
   workflow_call:
     inputs:
-      projectPath:    { required: true, type: string }
-      unityVersion:   { required: true, type: string }
-      testMode:       { required: true, type: string }
+      projectPath: { required: true, type: string }
+      unityVersion: { required: true, type: string }
+      testMode: { required: true, type: string }
     secrets:
-      UNITY_LICENSE:  { required: true }
-      UNITY_EMAIL:    { required: true }
+      UNITY_LICENSE: { required: true }
+      UNITY_EMAIL: { required: true }
       UNITY_PASSWORD: { required: true }
 
 ##############################################################################
@@ -50,7 +51,7 @@ jobs:
       # --------------------------------------------------------------------- #
       # 2-b. Checkout the contributor’s commit safely
       # --------------------------------------------------------------------- #
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           lfs: false
 
@@ -73,17 +74,17 @@ jobs:
       - uses: game-ci/unity-test-runner@v4
         id: tests
         env:
-          UNITY_LICENSE:  ${{ secrets.UNITY_LICENSE }}
-          UNITY_EMAIL:    ${{ secrets.UNITY_EMAIL }}
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
-          projectPath:    ${{ inputs.projectPath }}
-          unityVersion:   ${{ inputs.unityVersion }}
-          testMode:       ${{ inputs.testMode }}
-          customImage:    ${{ steps.custom_image.outputs.image }}
-          githubToken:    ${{ secrets.GITHUB_TOKEN }}
-          checkName:      ${{ inputs.unityVersion }} ${{ inputs.testMode }} ${{ matrix.platform }} Test Results
-          artifactsPath:  artifacts-${{ inputs.unityVersion }}-${{ inputs.testMode }}-${{ matrix.platform }}
+          projectPath: ${{ inputs.projectPath }}
+          unityVersion: ${{ inputs.unityVersion }}
+          testMode: ${{ inputs.testMode }}
+          customImage: ${{ steps.custom_image.outputs.image }}
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          checkName: ${{ inputs.unityVersion }} ${{ inputs.testMode }} ${{ matrix.platform }} Test Results
+          artifactsPath: artifacts-${{ inputs.unityVersion }}-${{ inputs.testMode }}-${{ matrix.platform }}
           customParameters: -CI true -GITHUB_ACTIONS true
 
       # --------------------------------------------------------------------- #

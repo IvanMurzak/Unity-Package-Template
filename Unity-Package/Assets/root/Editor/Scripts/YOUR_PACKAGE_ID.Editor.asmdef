@@ -1,7 +1,7 @@
 {
-    "name": "Package.Editor",
+    "name": "YOUR_PACKAGE_ID.Editor",
     "references": [
-        "Package.Runtime"
+        "YOUR_PACKAGE_ID.Runtime"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

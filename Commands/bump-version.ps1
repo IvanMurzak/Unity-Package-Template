@@ -42,6 +42,12 @@ $VersionFiles = @(
         Pattern     = '"version":\s*"[\d\.]+"'
         Replace     = '"version": "{VERSION}"'
         Description = "Unity package version"
+    },
+    @{
+        Path        = "Installer/Assets/YOUR_PACKAGE_NAME_INSTALLER/Installer.cs"
+        Pattern     = 'public const string Version = "[\d\.]+";'
+        Replace     = 'public const string Version = "{VERSION}";'
+        Description = "Installer C# version constant"
     }
 )
 

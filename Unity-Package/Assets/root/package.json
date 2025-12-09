@@ -1,5 +1,5 @@
 {
-    "name": "com.github.your_name.package",
+    "name": "YOUR_PACKAGE_ID_LOWERCASE",
     "displayName": "Package",
     "author": {
         "name": "Your_Name",
