@@ -127,7 +127,6 @@ foreach ($Item in $Items) {
     }
 
     if ($NewName -ne $Item.Name) {
-        $NewPath = Join-Path -Path $Item.Parent.FullName -ChildPath $NewName
         Rename-Item -Path $Item.FullName -NewName $NewName
         Write-Host "  Renamed: $($Item.Name) -> $NewName" -ForegroundColor Gray
     }
