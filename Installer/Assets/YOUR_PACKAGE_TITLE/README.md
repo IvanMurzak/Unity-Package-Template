@@ -14,67 +14,79 @@ This template repository is designed to be easily updated into a real Unity pack
 
 #### 2️⃣ Clone your new repository and open it in Unity Editor
 
-#### 3️⃣ Initialize Project
+#### 3️⃣ Rename `Package`
 
-Use the initialization script to rename the package and replace all placeholders.
+Your package should have unique identifier. It is called a `name` of the package. It support only limited symbols. There is a sample of the package name.
 
-```powershell
-.\commands\init.ps1 -PackageId "com.company.package" -PackageName "My Package"
+```text
+com.github.your_name.package
 ```
 
-This script will:
-- Rename directories and files.
-- Replace `YOUR_PACKAGE_ID`, `YOUR_PACKAGE_NAME`, etc. in all files.
+- 👉 Instead of the word `package` use a word or couple of words that explains the main purpose of the package.
+- 👉 The `name` should be unique in the world.
 
-#### 4️⃣ Manual Configuration
+###### Option 1: Use script to rename package (recommended)
 
-1. **Update `package.json`**
-   Open `Unity-Package/Assets/root/package.json` and update:
-   - `description`
-   - `author`
-   - `keywords`
-   - `unity` (minimum supported Unity version)
+For MacOS
 
-2. **Generate Meta Files**
-   To ensure all Unity meta files are correctly generated:
-   - Open Unity Hub.
-   - Add the `Installer` folder as a project.
-   - Add the `Unity-Package` folder as a project.
-   - Open both projects in Unity Editor. This will generate the necessary `.meta` files.
+```bash
 
-#### 5️⃣ Version Management
-
-To update the package version across all files (package.json, Installer.cs, etc.), use the bump version script:
-
-```powershell
-.\commands\bump-version.ps1 -NewVersion "1.0.1"
 ```
 
-#### 6️⃣ Setup CI/CD
+For Windows
 
-To enable automatic testing and deployment:
+```bash
+cd Commands
+.\package_rename.bat Username PackageName
+```
 
-1.  **Configure GitHub Secrets**
-    Go to `Settings` > `Secrets and variables` > `Actions` > `New repository secret` and add:
-    -   `UNITY_EMAIL`: Your Unity account email.
-    -   `UNITY_PASSWORD`: Your Unity account password.
-    -   `UNITY_LICENSE`: Content of your `Unity_lic.ulf` file.
-        -   Windows: `C:/ProgramData/Unity/Unity_lic.ulf`
-        -   Mac: `/Library/Application Support/Unity/Unity_lic.ulf`
-        -   Linux: `~/.local/share/unity3d/Unity/Unity_lic.ulf`
+###### Option 2: Manual package rename
 
-2.  **Enable Workflows**
-    Rename the sample workflow files to enable them:
-    -   `.github/workflows/release.yml-sample` ➡️ `.github/workflows/release.yml`
-    -   `.github/workflows/test_pull_request.yml-sample` ➡️ `.github/workflows/test_pull_request.yml`
+Follow the instruction - [manual package rename](https://github.com/IvanMurzak/Unity-Package-Template/blob/main/Docs/Manual-Package-Rename.md)
 
-3.  **Update Unity Version**
-    Open both `.yml` files and update the `UNITY_VERSION` (or similar variable) to match your project's Unity Editor version.
 
-4.  **Automatic Deployment**
-    The release workflow triggers automatically when you push to the `main` branch with an incremented version in `package.json`.
+#### 3️⃣ Customize `Assets/root/package.json`
 
-#### 7️⃣ Add files into `Assets/root` folder
+- 👉 **Update** `name`
+  > Sample: `com.github.your_name.package`
+  > Instead of the word `package` use a word or couple of words that explains the main purpose of the package.
+  > The `name` should be unique in the world.
+
+- 👉 **Update** `unity` to setup minimum supported Unity version
+- 👉 **Update**
+  - `displayName` - visible name of the package,
+  - `version` - the version of the package (1.0.0),
+  - `description` - short description of the package,
+  - `author` - author of the package and url to the author (could be GitHub profile),
+  - `keywords` - array of keywords that describes the package.
+
+#### 4️⃣ Do you need Tests?
+
+<details>
+  <summary><b>❌ NO</b></summary>
+
+- 👉 **Delete** `Assets/root/Tests` folder
+- 👉 **Delete** `.github/workflows` folder
+
+</details>
+
+<details>
+  <summary><b>✅ YES</b></summary>
+
+- 👉 Make sure you executed `package-rename` script from the step #2. If not, please follow [manual package rename](https://github.com/IvanMurzak/Unity-Package-Template/blob/main/Docs/Manual-Package-Rename.md) instructions
+
+- 👉 Add GitHub Secrets
+  > At the GitHub repository, go to "Settings", then "Secrets and Variables", then "Actions", then click on "New repository secret"
+   1. Add `UNITY_EMAIL` - email of your Unity ID's account
+   2. Add `UNITY_PASSWORD` - password of your Unity ID's account
+   3. Add `UNITY_LICENSE` - license content. Could be taken from `Unity_lic.ulf` file. Just open it in any text editor and copy the entire content
+      1. Windows: The `Unity_lic.ulf` file is located at `C:/ProgramData/Unity/Unity_lic.ulf`
+      2. MacOS: `/Library/Application Support/Unity/Unity_lic.ulf`
+      3. Linux: `~/.local/share/unity3d/Unity/Unity_lic.ulf`
+
+</details>
+
+#### 4️⃣ Add files into `Assets/root` folder
 
 [Unity guidelines](https://docs.unity3d.com/Manual/cus-layout.html) about organizing files into the package root directory
 
@@ -113,13 +125,13 @@ To enable automatic testing and deployment:
 
 > ⚠️ Everything outside of the `root` folder won't be added to your package. But still could be used for testing or showcasing your package at your repository.
 
-#### 8️⃣ Deploy to any registry you like
+#### 5️⃣ Deploy to any registry you like
 
 - [Deploy to OpenUPM](https://github.com/IvanMurzak/Unity-Package-Template/blob/main/Docs/Deploy-OpenUPM.md) (recommended)
 - [Deploy using GitHub](https://github.com/IvanMurzak/Unity-Package-Template/blob/main/Docs/Deploy-GitHub.md)
 - [Deploy to npmjs.com](https://github.com/IvanMurzak/Unity-Package-Template/blob/main/Docs/Deploy-npmjs.md)
 
-#### 9️⃣ Install your package into Unity Project
+#### 6️⃣ Install your package into Unity Project
 
 When your package is distributed, you can install it into any Unity project.
 
