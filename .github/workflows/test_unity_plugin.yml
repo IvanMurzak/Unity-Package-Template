@@ -63,7 +63,7 @@ jobs:
           path: |
             ${{ inputs.projectPath }}/Library
             ~/.cache/unity3d
-          key: Library-${{ inputs.unityVersion }}-${{ inputs.testMode }}-${{ matrix.platform }}
+          key: ${{ inputs.unityVersion }} ${{ inputs.testMode }} on ${{ matrix.platform }}
 
       # --------------------------------------------------------------------- #
       - name: Generate custom image name

@@ -9,79 +9,79 @@ on:
 jobs:
   # --- EDIT MODE ---
 
-  test-unity-2022-3-61f1-editmode:
+  test-unity-2022-3-62f3-editmode:
     uses: ./.github/workflows/test_unity_plugin.yml
     with:
-      projectPath: "./Unity-Package"
-      unityVersion: "2022.3.61f1"
+      projectPath: "./Unity-Tests/2022.3.62f3"
+      unityVersion: "2022.3.62f3"
       testMode: "editmode"
     secrets: inherit
 
-  test-unity-2023-2-20f1-editmode:
+  test-unity-2023-2-22f1-editmode:
     uses: ./.github/workflows/test_unity_plugin.yml
     with:
-      projectPath: "./Unity-Package"
-      unityVersion: "2023.2.20f1"
+      projectPath: "./Unity-Tests/2023.2.22f1"
+      unityVersion: "2023.2.22f1"
       testMode: "editmode"
     secrets: inherit
 
-  test-unity-6000-2-3f1-editmode:
+  test-unity-6000-3-1f1-editmode:
     uses: ./.github/workflows/test_unity_plugin.yml
     with:
-      projectPath: "./Unity-Package"
-      unityVersion: "6000.2.3f1"
+      projectPath: "./Unity-Tests/6000.3.1f1"
+      unityVersion: "6000.3.1f1"
       testMode: "editmode"
     secrets: inherit
 
   # --- PLAY MODE ---
 
-  test-unity-2022-3-61f1-playmode:
+  test-unity-2022-3-62f3-playmode:
     uses: ./.github/workflows/test_unity_plugin.yml
     with:
-      projectPath: "./Unity-Package"
-      unityVersion: "2022.3.61f1"
+      projectPath: "./Unity-Tests/2022.3.62f3"
+      unityVersion: "2022.3.62f3"
       testMode: "playmode"
     secrets: inherit
 
-  test-unity-2023-2-20f1-playmode:
+  test-unity-2023-2-22f1-playmode:
     uses: ./.github/workflows/test_unity_plugin.yml
     with:
-      projectPath: "./Unity-Package"
-      unityVersion: "2023.2.20f1"
+      projectPath: "./Unity-Tests/2023.2.22f1"
+      unityVersion: "2023.2.22f1"
       testMode: "playmode"
     secrets: inherit
 
-  test-unity-6000-2-3f1-playmode:
+  test-unity-6000-3-1f1-playmode:
     uses: ./.github/workflows/test_unity_plugin.yml
     with:
-      projectPath: "./Unity-Package"
-      unityVersion: "6000.2.3f1"
+      projectPath: "./Unity-Tests/6000.3.1f1"
+      unityVersion: "6000.3.1f1"
       testMode: "playmode"
     secrets: inherit
 
   # --- STANDALONE ---
 
-  test-unity-2022-3-61f1-standalone:
+  test-unity-2022-3-62f3-standalone:
     uses: ./.github/workflows/test_unity_plugin.yml
     with:
-      projectPath: "./Unity-Package"
-      unityVersion: "2022.3.61f1"
+      projectPath: "./Unity-Tests/2022.3.62f3"
+      unityVersion: "2022.3.62f3"
       testMode: "standalone"
     secrets: inherit
 
-  test-unity-2023-2-20f1-standalone:
+  test-unity-2023-2-22f1-standalone:
     uses: ./.github/workflows/test_unity_plugin.yml
     with:
-      projectPath: "./Unity-Package"
-      unityVersion: "2023.2.20f1"
+      projectPath: "./Unity-Tests/2023.2.22f1"
+      unityVersion: "2023.2.22f1"
       testMode: "standalone"
     secrets: inherit
 
-  test-unity-6000-2-3f1-standalone:
+  test-unity-6000-3-1f1-standalone:
     uses: ./.github/workflows/test_unity_plugin.yml
     with:
-      projectPath: "./Unity-Package"
-      unityVersion: "6000.2.3f1"
+      projectPath: "./Unity-Tests/6000.3.1f1"
+      unityVersion: "6000.3.1f1"
       testMode: "standalone"
     secrets: inherit
 
