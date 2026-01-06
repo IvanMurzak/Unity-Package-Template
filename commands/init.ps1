@@ -61,7 +61,7 @@ Write-Host "  Installer File: $PackageNameInstallerFile"
 Write-Host ""
 
 # Define target paths
-$TargetPaths = @("Installer", "Unity-Package", "README.md")
+$TargetPaths = @("commands/bump-version.ps1", "Installer", "Unity-Package", "Unity-Tests", "README.md", ".github")
 
 # 1. Replace content in files
 Write-Host "Replacing content in files..." -ForegroundColor Yellow
