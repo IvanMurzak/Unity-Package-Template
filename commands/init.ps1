@@ -69,13 +69,22 @@ if ([string]::IsNullOrWhiteSpace($InstallerExtraPath)) {
     $PackageNameInstaller = "$InstallerExtraPath/$PackageNameInstallerBase"
 }
 
-# Replacements map
+# Replacements map for file content (includes extra path in installer name)
 $Replacements = @{
     "YOUR_PACKAGE_ID"                  = $PackageId
     "YOUR_PACKAGE_ID_LOWERCASE"        = $PackageIdLowercase
     "YOUR_PACKAGE_NAME"                = $PackageName
     "YOUR_PACKAGE_NAME_INSTALLER_FILE" = $PackageNameInstallerFile
     "YOUR_PACKAGE_NAME_INSTALLER"      = $PackageNameInstaller
+}
+
+# Replacements map for file/folder renaming (uses base names without extra path)
+$ReplacementsForRenaming = @{
+    "YOUR_PACKAGE_ID"                  = $PackageId
+    "YOUR_PACKAGE_ID_LOWERCASE"        = $PackageIdLowercase
+    "YOUR_PACKAGE_NAME"                = $PackageName
+    "YOUR_PACKAGE_NAME_INSTALLER_FILE" = $PackageNameInstallerFile
+    "YOUR_PACKAGE_NAME_INSTALLER"      = $PackageNameInstallerBase
 }
 
 # Sort keys by length descending to avoid partial replacements
@@ -178,7 +187,7 @@ foreach ($Item in $Items) {
     $NewName = $Item.Name
     foreach ($Key in $SortedKeys) {
         if ($NewName -match $Key) {
-            $NewName = $NewName -replace $Key, $Replacements[$Key]
+            $NewName = $NewName -replace $Key, $ReplacementsForRenaming[$Key]
         }
     }
 
