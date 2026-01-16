@@ -65,7 +65,8 @@ $PackageNameInstallerFile = $PackageNameInstallerBase -replace ' ', '-'  # Stays
 # Prepend extra path to installer name if provided
 if ([string]::IsNullOrWhiteSpace($InstallerExtraPath)) {
     $PackageNameInstaller = $PackageNameInstallerBase
-} else {
+}
+else {
     $PackageNameInstaller = "$InstallerExtraPath/$PackageNameInstallerBase"
 }
 
@@ -104,17 +105,106 @@ if (-not [string]::IsNullOrWhiteSpace($InstallerExtraPath)) {
 }
 Write-Host ""
 
-# Define target paths
-$TargetPaths = @("commands/bump-version.ps1", "Installer", "Unity-Package", "Unity-Tests", "README.md", ".github")
+# Define target paths with optional ignore patterns
+# Each entry can be:
+#   - A simple string: "path/to/target"
+#   - A hashtable with Path and optional Ignore array: @{ Path = "folder"; Ignore = @("*/pattern", "specific/path") }
+# Ignore patterns are relative to the target path and support wildcards (*) for single directory level
+$TargetPaths = @(
+    @{ Path = "commands/bump-version.ps1" },
+    @{
+        Path   = "Installer"
+        Ignore = @(
+            "/Library",
+            "/Temp",
+            "/Logs",
+            "/obj"
+        )
+    },
+    @{
+        Path   = "Unity-Package"
+        Ignore = @(
+            "/Library",
+            "/Temp",
+            "/Logs",
+            "/obj"
+        )
+    },
+    @{
+        Path   = "Unity-Tests"
+        Ignore = @(
+            "*/Library",
+            "*/Temp",
+            "*/Logs",
+            "*/obj"
+        )
+    },
+    @{ Path = "README.md" },
+    @{ Path = ".github" }
+)
+
+# Helper function to check if a path should be ignored
+function Test-ShouldIgnore {
+    param(
+        [string]$ItemPath,
+        [string]$BasePath,
+        [string[]]$IgnorePatterns
+    )
+
+    if (-not $IgnorePatterns -or $IgnorePatterns.Count -eq 0) {
+        return $false
+    }
+
+    # Get relative path from base
+    $RelativePath = $ItemPath.Substring($BasePath.Length).TrimStart('\', '/')
+    $RelativePath = $RelativePath -replace '\\', '/'
+
+    foreach ($Pattern in $IgnorePatterns) {
+        # Convert glob pattern to regex
+        # * matches any single directory/file name (not path separator)
+        # ** would match multiple levels (not implemented here for simplicity)
+        $RegexPattern = "^" + ($Pattern -replace '\*', '[^/]+') + "(/.*)?$"
+
+        if ($RelativePath -match $RegexPattern) {
+            return $true
+        }
+    }
+
+    return $false
+}
+
+# Helper function to normalize target path entry
+function Get-TargetPathInfo {
+    param($Entry)
+
+    if ($Entry -is [string]) {
+        return @{ Path = $Entry; Ignore = @() }
+    }
+    elseif ($Entry -is [hashtable]) {
+        return @{
+            Path   = $Entry.Path
+            Ignore = if ($Entry.Ignore) { $Entry.Ignore } else { @() }
+        }
+    }
+    else {
+        throw "Invalid target path entry: $Entry"
+    }
+}
 
 # 1. Replace content in files
 Write-Host "Replacing content in files..." -ForegroundColor Yellow
 $Files = @()
-foreach ($Path in $TargetPaths) {
-    $FullPath = Join-Path $RepoRoot $Path
+foreach ($Entry in $TargetPaths) {
+    $TargetInfo = Get-TargetPathInfo $Entry
+    $FullPath = Join-Path $RepoRoot $TargetInfo.Path
     if (Test-Path $FullPath) {
         if ((Get-Item $FullPath).PSIsContainer) {
-            $Files += Get-ChildItem -Path $FullPath -Recurse -File
+            $AllFiles = Get-ChildItem -Path $FullPath -Recurse -File
+            foreach ($File in $AllFiles) {
+                if (-not (Test-ShouldIgnore -ItemPath $File.FullName -BasePath $FullPath -IgnorePatterns $TargetInfo.Ignore)) {
+                    $Files += $File
+                }
+            }
         }
         else {
             $Files += Get-Item $FullPath
@@ -168,11 +258,17 @@ if (-not [string]::IsNullOrWhiteSpace($InstallerExtraPath)) {
 # We need to do this depth-first (bottom-up) so we don't rename a parent directory before its children
 Write-Host "Renaming files and directories..." -ForegroundColor Yellow
 $Items = @()
-foreach ($Path in $TargetPaths) {
-    $FullPath = Join-Path $RepoRoot $Path
+foreach ($Entry in $TargetPaths) {
+    $TargetInfo = Get-TargetPathInfo $Entry
+    $FullPath = Join-Path $RepoRoot $TargetInfo.Path
     if (Test-Path $FullPath) {
         if ((Get-Item $FullPath).PSIsContainer) {
-            $Items += Get-ChildItem -Path $FullPath -Recurse
+            $AllItems = Get-ChildItem -Path $FullPath -Recurse
+            foreach ($Item in $AllItems) {
+                if (-not (Test-ShouldIgnore -ItemPath $Item.FullName -BasePath $FullPath -IgnorePatterns $TargetInfo.Ignore)) {
+                    $Items += $Item
+                }
+            }
         }
         else {
             $Items += Get-Item $FullPath
