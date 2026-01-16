@@ -24,7 +24,7 @@ Use the initialization script to rename the package and replace all placeholders
 
 This script will:
 - Rename directories and files.
-- Replace `com.company.package`, `My Package`, etc. in all files.
+- Replace `YOUR_PACKAGE_ID`, `YOUR_PACKAGE_NAME`, etc. in all files and folder names.
 
 ### 4️⃣ Update `package.json`
 Open `Unity-Package/Assets/root/package.json` and update:
