@@ -11,6 +11,7 @@
     - YOUR_PACKAGE_NAME
     - YOUR_PACKAGE_NAME_INSTALLER
     - YOUR_PACKAGE_NAME_INSTALLER_FILE
+    - YOUR_GITHUB_USERNAME_REPOSITORY
 
 .PARAMETER PackageId
     The package ID (e.g., "com.company.package").
@@ -23,11 +24,18 @@
     For example, "Editor" places the installer at Assets/Editor/{Package} Installer.
     If not provided, you will be prompted (press Enter to skip).
 
+.PARAMETER GitHubRepository
+    The GitHub username and repository name in the format "Username/Repository-Name".
+    For example, "MyGitHubUsername/My-Repository-Name".
+
 .EXAMPLE
     .\init.ps1 -PackageId "com.mycompany.coolpackage" -PackageName "Cool Package"
 
 .EXAMPLE
     .\init.ps1 -PackageId "com.mycompany.coolpackage" -PackageName "Cool Package" -InstallerExtraPath "Editor"
+
+.EXAMPLE
+    .\init.ps1 -PackageId "com.mycompany.coolpackage" -PackageName "Cool Package" -GitHubRepository "myusername/cool-package"
 #>
 
 param(
@@ -38,7 +46,10 @@ param(
     [string]$PackageName,
 
     [Parameter(Mandatory = $false)]
-    [string]$InstallerExtraPath
+    [string]$InstallerExtraPath,
+
+    [Parameter(Mandatory = $true)]
+    [string]$GitHubRepository
 )
 
 $ErrorActionPreference = "Stop"
@@ -77,6 +88,7 @@ $Replacements = @{
     "YOUR_PACKAGE_NAME"                = $PackageName
     "YOUR_PACKAGE_NAME_INSTALLER_FILE" = $PackageNameInstallerFile
     "YOUR_PACKAGE_NAME_INSTALLER"      = $PackageNameInstaller
+    "YOUR_GITHUB_USERNAME_REPOSITORY"  = $GitHubRepository
 }
 
 # Replacements map for file/folder renaming (uses base names without extra path)
@@ -86,6 +98,7 @@ $ReplacementsForRenaming = @{
     "YOUR_PACKAGE_NAME"                = $PackageName
     "YOUR_PACKAGE_NAME_INSTALLER_FILE" = $PackageNameInstallerFile
     "YOUR_PACKAGE_NAME_INSTALLER"      = $PackageNameInstallerBase
+    "YOUR_GITHUB_USERNAME_REPOSITORY"  = $GitHubRepository
 }
 
 # Sort keys by length descending to avoid partial replacements
@@ -100,6 +113,7 @@ Write-Host "  ID: $PackageId"
 Write-Host "  Name: $PackageName"
 Write-Host "  Installer: $PackageNameInstaller"
 Write-Host "  Installer File: $PackageNameInstallerFile"
+Write-Host "  GitHub Repository: $GitHubRepository"
 if (-not [string]::IsNullOrWhiteSpace($InstallerExtraPath)) {
     Write-Host "  Installer Extra Path: $InstallerExtraPath"
 }
