@@ -18,8 +18,16 @@
 .PARAMETER PackageName
     The package name (e.g., "My Package").
 
+.PARAMETER InstallerExtraPath
+    Optional. An extra path segment between Assets/ and the Installer folder.
+    For example, "Editor" places the installer at Assets/Editor/{Package} Installer.
+    If not provided, you will be prompted (press Enter to skip).
+
 .EXAMPLE
     .\init.ps1 -PackageId "com.mycompany.coolpackage" -PackageName "Cool Package"
+
+.EXAMPLE
+    .\init.ps1 -PackageId "com.mycompany.coolpackage" -PackageName "Cool Package" -InstallerExtraPath "Editor"
 #>
 
 param(
@@ -27,23 +35,57 @@ param(
     [string]$PackageId,
 
     [Parameter(Mandatory = $true)]
-    [string]$PackageName
+    [string]$PackageName,
+
+    [Parameter(Mandatory = $false)]
+    [string]$InstallerExtraPath
 )
 
 $ErrorActionPreference = "Stop"
 
+# Prompt for InstallerExtraPath if not provided
+if (-not $PSBoundParameters.ContainsKey('InstallerExtraPath')) {
+    Write-Host "Optional: Enter an extra path for the Installer (e.g., 'Editor')." -ForegroundColor Cyan
+    Write-Host "Press Enter to skip." -ForegroundColor Gray
+    $InstallerExtraPath = Read-Host "Installer Extra Path"
+}
+
+# Normalize InstallerExtraPath
+if (-not [string]::IsNullOrWhiteSpace($InstallerExtraPath)) {
+    $InstallerExtraPath = ($InstallerExtraPath.Trim() -replace '\\', '/').TrimStart('/').TrimEnd('/')
+}
+
 # Derived variables
 $PackageIdLowercase = $PackageId.ToLower()
-$PackageNameInstaller = "$PackageName Installer"
-$PackageNameInstallerFile = $PackageNameInstaller -replace ' ', '-'
 
-# Replacements map
+# Compute base installer name and file name first
+$PackageNameInstallerBase = "$PackageName Installer"
+$PackageNameInstallerFile = $PackageNameInstallerBase -replace ' ', '-'  # Stays unchanged (no path prefix)
+
+# Prepend extra path to installer name if provided
+if ([string]::IsNullOrWhiteSpace($InstallerExtraPath)) {
+    $PackageNameInstaller = $PackageNameInstallerBase
+}
+else {
+    $PackageNameInstaller = "$InstallerExtraPath/$PackageNameInstallerBase"
+}
+
+# Replacements map for file content (includes extra path in installer name)
 $Replacements = @{
     "YOUR_PACKAGE_ID"                  = $PackageId
     "YOUR_PACKAGE_ID_LOWERCASE"        = $PackageIdLowercase
     "YOUR_PACKAGE_NAME"                = $PackageName
     "YOUR_PACKAGE_NAME_INSTALLER_FILE" = $PackageNameInstallerFile
     "YOUR_PACKAGE_NAME_INSTALLER"      = $PackageNameInstaller
+}
+
+# Replacements map for file/folder renaming (uses base names without extra path)
+$ReplacementsForRenaming = @{
+    "YOUR_PACKAGE_ID"                  = $PackageId
+    "YOUR_PACKAGE_ID_LOWERCASE"        = $PackageIdLowercase
+    "YOUR_PACKAGE_NAME"                = $PackageName
+    "YOUR_PACKAGE_NAME_INSTALLER_FILE" = $PackageNameInstallerFile
+    "YOUR_PACKAGE_NAME_INSTALLER"      = $PackageNameInstallerBase
 }
 
 # Sort keys by length descending to avoid partial replacements
@@ -58,19 +100,111 @@ Write-Host "  ID: $PackageId"
 Write-Host "  Name: $PackageName"
 Write-Host "  Installer: $PackageNameInstaller"
 Write-Host "  Installer File: $PackageNameInstallerFile"
+if (-not [string]::IsNullOrWhiteSpace($InstallerExtraPath)) {
+    Write-Host "  Installer Extra Path: $InstallerExtraPath"
+}
 Write-Host ""
 
-# Define target paths
-$TargetPaths = @("commands/bump-version.ps1", "Installer", "Unity-Package", "Unity-Tests", "README.md", ".github")
+# Define target paths with optional ignore patterns
+# Each entry can be:
+#   - A simple string: "path/to/target"
+#   - A hashtable with Path and optional Ignore array: @{ Path = "folder"; Ignore = @("*/pattern", "specific/path") }
+# Ignore patterns are relative to the target path and support wildcards (*) for single directory level
+$TargetPaths = @(
+    @{ Path = "commands/bump-version.ps1" },
+    @{
+        Path   = "Installer"
+        Ignore = @(
+            "/Library",
+            "/Temp",
+            "/Logs",
+            "/obj"
+        )
+    },
+    @{
+        Path   = "Unity-Package"
+        Ignore = @(
+            "/Library",
+            "/Temp",
+            "/Logs",
+            "/obj"
+        )
+    },
+    @{
+        Path   = "Unity-Tests"
+        Ignore = @(
+            "*/Library",
+            "*/Temp",
+            "*/Logs",
+            "*/obj"
+        )
+    },
+    @{ Path = "README.md" },
+    @{ Path = ".github" }
+)
+
+# Helper function to check if a path should be ignored
+function Test-ShouldIgnore {
+    param(
+        [string]$ItemPath,
+        [string]$BasePath,
+        [string[]]$IgnorePatterns
+    )
+
+    if (-not $IgnorePatterns -or $IgnorePatterns.Count -eq 0) {
+        return $false
+    }
+
+    # Get relative path from base
+    $RelativePath = $ItemPath.Substring($BasePath.Length).TrimStart('\', '/')
+    $RelativePath = $RelativePath -replace '\\', '/'
+
+    foreach ($Pattern in $IgnorePatterns) {
+        # Convert glob pattern to regex
+        # * matches any single directory/file name (not path separator)
+        # ** would match multiple levels (not implemented here for simplicity)
+        $RegexPattern = "^" + ($Pattern -replace '\*', '[^/]+') + "(/.*)?$"
+
+        if ($RelativePath -match $RegexPattern) {
+            return $true
+        }
+    }
+
+    return $false
+}
+
+# Helper function to normalize target path entry
+function Get-TargetPathInfo {
+    param($Entry)
+
+    if ($Entry -is [string]) {
+        return @{ Path = $Entry; Ignore = @() }
+    }
+    elseif ($Entry -is [hashtable]) {
+        return @{
+            Path   = $Entry.Path
+            Ignore = if ($Entry.Ignore) { $Entry.Ignore } else { @() }
+        }
+    }
+    else {
+        throw "Invalid target path entry: $Entry"
+    }
+}
 
 # 1. Replace content in files
 Write-Host "Replacing content in files..." -ForegroundColor Yellow
 $Files = @()
-foreach ($Path in $TargetPaths) {
-    $FullPath = Join-Path $RepoRoot $Path
+foreach ($Entry in $TargetPaths) {
+    $TargetInfo = Get-TargetPathInfo $Entry
+    $FullPath = Join-Path $RepoRoot $TargetInfo.Path
     if (Test-Path $FullPath) {
         if ((Get-Item $FullPath).PSIsContainer) {
-            $Files += Get-ChildItem -Path $FullPath -Recurse -File
+            $AllFiles = Get-ChildItem -Path $FullPath -Recurse -File
+            foreach ($File in $AllFiles) {
+                if (-not (Test-ShouldIgnore -ItemPath $File.FullName -BasePath $FullPath -IgnorePatterns $TargetInfo.Ignore)) {
+                    $Files += $File
+                }
+            }
         }
         else {
             $Files += Get-Item $FullPath
@@ -99,15 +233,42 @@ foreach ($File in $Files) {
     }
 }
 
+# 1.5. Create extra path folders and move installer (if extra path provided)
+if (-not [string]::IsNullOrWhiteSpace($InstallerExtraPath)) {
+    Write-Host "Creating extra path and moving installer folder..." -ForegroundColor Yellow
+    $InstallerAssetsDir = Join-Path $RepoRoot "Installer/Assets"
+    $SourceFolder = Join-Path $InstallerAssetsDir "YOUR_PACKAGE_NAME_INSTALLER"
+    $ExtraPathDir = Join-Path $InstallerAssetsDir $InstallerExtraPath
+
+    # Create extra path directories
+    if (-not (Test-Path $ExtraPathDir)) {
+        New-Item -Path $ExtraPathDir -ItemType Directory -Force | Out-Null
+        Write-Host "  Created: $ExtraPathDir" -ForegroundColor Gray
+    }
+
+    # Move installer folder
+    if (Test-Path $SourceFolder) {
+        $DestFolder = Join-Path $ExtraPathDir "YOUR_PACKAGE_NAME_INSTALLER"
+        Move-Item -Path $SourceFolder -Destination $DestFolder -Force
+        Write-Host "  Moved installer to: $InstallerExtraPath/" -ForegroundColor Gray
+    }
+}
+
 # 2. Rename files and directories
 # We need to do this depth-first (bottom-up) so we don't rename a parent directory before its children
 Write-Host "Renaming files and directories..." -ForegroundColor Yellow
 $Items = @()
-foreach ($Path in $TargetPaths) {
-    $FullPath = Join-Path $RepoRoot $Path
+foreach ($Entry in $TargetPaths) {
+    $TargetInfo = Get-TargetPathInfo $Entry
+    $FullPath = Join-Path $RepoRoot $TargetInfo.Path
     if (Test-Path $FullPath) {
         if ((Get-Item $FullPath).PSIsContainer) {
-            $Items += Get-ChildItem -Path $FullPath -Recurse
+            $AllItems = Get-ChildItem -Path $FullPath -Recurse
+            foreach ($Item in $AllItems) {
+                if (-not (Test-ShouldIgnore -ItemPath $Item.FullName -BasePath $FullPath -IgnorePatterns $TargetInfo.Ignore)) {
+                    $Items += $Item
+                }
+            }
         }
         else {
             $Items += Get-Item $FullPath
@@ -122,7 +283,7 @@ foreach ($Item in $Items) {
     $NewName = $Item.Name
     foreach ($Key in $SortedKeys) {
         if ($NewName -match $Key) {
-            $NewName = $NewName -replace $Key, $Replacements[$Key]
+            $NewName = $NewName -replace $Key, $ReplacementsForRenaming[$Key]
         }
     }
 

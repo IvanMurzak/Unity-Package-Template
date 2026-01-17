@@ -3,7 +3,9 @@
     "references": [
         "YOUR_PACKAGE_ID.Runtime"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

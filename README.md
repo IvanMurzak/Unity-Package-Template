@@ -8,73 +8,51 @@ This template repository is designed to be easily updated into a real Unity pack
 
 # Steps to make your package
 
-#### 1️⃣ Click the button to create new repository on GitHub using this template.
+### 1️⃣ Click the button - create repository
 
 [![create new repository](https://user-images.githubusercontent.com/9135028/198753285-3d3c9601-0711-43c7-a8f2-d40ec42393a2.png)](https://github.com/IvanMurzak/Unity-Package-Template/generate)
 
-#### 2️⃣ Clone your new repository and open it in Unity Editor
+### 2️⃣ Clone your new repository
 
-#### 3️⃣ Initialize Project
+### 3️⃣ Initialize Project
 
 Use the initialization script to rename the package and replace all placeholders.
 
 ```powershell
-.\commands\init.ps1 -PackageId "com.company.package" -PackageName "My Package"
+./commands/init.ps1 -PackageId "com.company.package" -PackageName "My Package"
 ```
 
 This script will:
 - Rename directories and files.
-- Replace `YOUR_PACKAGE_ID`, `YOUR_PACKAGE_NAME`, etc. in all files.
+- Replace `YOUR_PACKAGE_ID`, `YOUR_PACKAGE_NAME`, etc. in all files and folder names.
 
-#### 4️⃣ Manual Configuration
+### 4️⃣ Update `package.json`
+Open `Unity-Package/Assets/root/package.json` and update:
+- `description`
+- `author`
+- `keywords`
+- `unity` (minimum supported Unity version)
 
-1. **Update `package.json`**
-   Open `Unity-Package/Assets/root/package.json` and update:
-   - `description`
-   - `author`
-   - `keywords`
-   - `unity` (minimum supported Unity version)
+### 5️⃣ Generate Meta Files
 
-2. **Generate Meta Files**
-   To ensure all Unity meta files are correctly generated:
+#### Using script
+   Open Unity project to generate `.meta` files.
+   **On Mac and Linux**:
+   ```bash
+   ./commands/open-all-projects-unix.sh
+   ```
+   **On Windows**:
+   ```bash
+   ./commands/open-all-projects-windows.ps1
+   ```
+#### OR Manually
+   You may open the projects manually to achieve the same result.
    - Open Unity Hub.
    - Add the `Installer` folder as a project.
    - Add the `Unity-Package` folder as a project.
    - Open both projects in Unity Editor. This will generate the necessary `.meta` files.
 
-#### 5️⃣ Version Management
-
-To update the package version across all files (package.json, Installer.cs, etc.), use the bump version script:
-
-```powershell
-.\commands\bump-version.ps1 -NewVersion "1.0.1"
-```
-
-#### 6️⃣ Setup CI/CD
-
-To enable automatic testing and deployment:
-
-1.  **Configure GitHub Secrets**
-    Go to `Settings` > `Secrets and variables` > `Actions` > `New repository secret` and add:
-    -   `UNITY_EMAIL`: Your Unity account email.
-    -   `UNITY_PASSWORD`: Your Unity account password.
-    -   `UNITY_LICENSE`: Content of your `Unity_lic.ulf` file.
-        -   Windows: `C:/ProgramData/Unity/Unity_lic.ulf`
-        -   Mac: `/Library/Application Support/Unity/Unity_lic.ulf`
-        -   Linux: `~/.local/share/unity3d/Unity/Unity_lic.ulf`
-
-2.  **Enable Workflows**
-    Rename the sample workflow files to enable them:
-    -   `.github/workflows/release.yml-sample` ➡️ `.github/workflows/release.yml`
-    -   `.github/workflows/test_pull_request.yml-sample` ➡️ `.github/workflows/test_pull_request.yml`
-
-3.  **Update Unity Version**
-    Open both `.yml` files and update the `UNITY_VERSION` (or similar variable) to match your project's Unity Editor version.
-
-4.  **Automatic Deployment**
-    The release workflow triggers automatically when you push to the `main` branch with an incremented version in `package.json`.
-
-#### 7️⃣ Add files into `Assets/root` folder
+### 6️⃣ Add files into `Unity-Package/Assets/root` folder
 
 [Unity guidelines](https://docs.unity3d.com/Manual/cus-layout.html) about organizing files into the package root directory
 
@@ -106,20 +84,54 @@ To enable automatic testing and deployment:
        └── [package-name].md
 ```
 
-##### Final polishing
+# Optional steps
+
+### 1. Version Management
+
+To update the package version across all files (package.json, Installer.cs, etc.), use the bump version script:
+
+```powershell
+.\commands\bump-version.ps1 -NewVersion "1.0.1"
+```
+
+### 2. Setup CI/CD
+
+To enable automatic testing and deployment:
+
+1.  **Configure GitHub Secrets**
+    Go to `Settings` > `Secrets and variables` > `Actions` > `New repository secret` and add:
+    -   `UNITY_EMAIL`: Your Unity account email.
+    -   `UNITY_PASSWORD`: Your Unity account password.
+    -   `UNITY_LICENSE`: Content of your `Unity_lic.ulf` file.
+        -   Windows: `C:/ProgramData/Unity/Unity_lic.ulf`
+        -   Mac: `/Library/Application Support/Unity/Unity_lic.ulf`
+        -   Linux: `~/.local/share/unity3d/Unity/Unity_lic.ulf`
+
+2.  **Enable Workflows**
+    Rename the sample workflow files to enable them:
+    -   `.github/workflows/release.yml-sample` ➡️ `.github/workflows/release.yml`
+    -   `.github/workflows/test_pull_request.yml-sample` ➡️ `.github/workflows/test_pull_request.yml`
+
+3.  **Update Unity Version**
+    Open both `.yml` files and update the `UNITY_VERSION` (or similar variable) to match your project's Unity Editor version.
+
+4.  **Automatic Deployment**
+    The release workflow triggers automatically when you push to the `main` branch with an incremented version in `package.json`.
+
+# Final polishing
 
 - Update the `README.md` file (this file) with information about your package.
 - Copy the updated `README.md` to `Assets/root` as well.
 
 > ⚠️ Everything outside of the `root` folder won't be added to your package. But still could be used for testing or showcasing your package at your repository.
 
-#### 8️⃣ Deploy to any registry you like
+### 1. Deploy to any registry you like
 
 - [Deploy to OpenUPM](https://github.com/IvanMurzak/Unity-Package-Template/blob/main/Docs/Deploy-OpenUPM.md) (recommended)
 - [Deploy using GitHub](https://github.com/IvanMurzak/Unity-Package-Template/blob/main/Docs/Deploy-GitHub.md)
 - [Deploy to npmjs.com](https://github.com/IvanMurzak/Unity-Package-Template/blob/main/Docs/Deploy-npmjs.md)
 
-#### 9️⃣ Install your package into Unity Project
+### 2. Install your package into Unity Project
 
 When your package is distributed, you can install it into any Unity project.
 
